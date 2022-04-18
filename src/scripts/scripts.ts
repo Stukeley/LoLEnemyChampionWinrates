@@ -1,7 +1,5 @@
 ﻿import {RateLimit} from "./rateLimit";
-import {ConvertMatchListInfo} from "./matchListInfo";
-import {ConvertAccountInfo} from "./accountInfo";
-import {ConvertMatchInfo, MatchInfo} from "./matchInfo";
+import {MatchInfo} from "./matchInfo";
 import {WinLossStat} from "./winLossStat";
 
 const API_KEY = "API_KEY_HERE";
@@ -47,29 +45,30 @@ async function fetchAndParseData() {
 async function getAccountPuuid(summonerName:string) {
   let url = `https://${region}.api.riotgames.com/lol/summoner/v4/summoners/by-name/${summonerName}?api_key=${API_KEY}`;
   
+  // Send a request to url using axios
   let response = await fetch(url, {
     method: "GET",
     headers: {
-      "Accept": "application/json",
-      "Content-Type": "application/json"
+      "Accept-Language": "en,pl-PL;q=0.9,pl;q=0.8,en-US;q=0.7",
+      "Accept-Charset": "application/x-www-form-urlencoded; charset=UTF-8"
     }
   }).then(response => {
     return response.json();
   });
-
+  
   rateLimit.requestCount++;
 
-  return ConvertAccountInfo.toAccountInfo(response).puuid;
+  return response.puuid;
 }
 
 async function getMatchList(puuid:string) {
   let url = `https://${regionGeneral}.api.riotgames.com/lol/match/v5/matches/by-puuid/${puuid}?api_key=${API_KEY}`;
-
+  
   let response = await fetch(url, {
     method: "GET",
     headers: {
-      "Accept": "application/json",
-      "Content-Type": "application/json"
+      "Accept-Language": "en,pl-PL;q=0.9,pl;q=0.8,en-US;q=0.7",
+      "Accept-Charset": "application/x-www-form-urlencoded; charset=UTF-8"
     }
   }).then(response => {
     return response.json();
@@ -77,17 +76,17 @@ async function getMatchList(puuid:string) {
   
   rateLimit.requestCount++;
   
-  return ConvertMatchListInfo.toMatchListInfo(response);
+  return response;
 }
 
 async function getMatchInfo(matchId:string) {
   let url = `https://${regionGeneral}.api.riotgames.com/lol/match/v5/matches/${matchId}?api_key=${API_KEY}`;
-
+  
   let response = await fetch(url, {
     method: "GET",
     headers: {
-      "Accept": "application/json",
-      "Content-Type": "application/json"
+      "Accept-Language": "en,pl-PL;q=0.9,pl;q=0.8,en-US;q=0.7",
+      "Accept-Charset": "application/x-www-form-urlencoded; charset=UTF-8"
     }
   }).then(response => {
     return response.json();
@@ -95,7 +94,7 @@ async function getMatchInfo(matchId:string) {
   
   rateLimit.requestCount++;
   
-  return ConvertMatchInfo.toMatchInfo(response);
+  return response;
 }
 
 function parseMatchInfo(matchInfo:MatchInfo) {
@@ -138,3 +137,7 @@ function orderDictionaryByWinrate(championNames: { [p: string]: WinLossStat }) {
   
   return orderedChampionNames;
 }
+
+module.exports = {
+  fetchAndParseData
+};
