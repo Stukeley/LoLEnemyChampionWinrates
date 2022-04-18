@@ -1,0 +1,7 @@
+﻿# Project exclude paths
+/src/scripts/accountInfo.js
+/src/scripts/matchInfo.js
+/src/scripts/matchListInfo.js
+/src/scripts/rateLimit.js
+/src/scripts/scripts.js
+/src/scripts/winLossStat.js
